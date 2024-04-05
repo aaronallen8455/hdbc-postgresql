@@ -1,3 +1,4 @@
+{-# LANGUAGE InterruptibleFFI #-}
 module Database.HDBC.PostgreSQL.Statement where
 
 import Database.HDBC.Types
@@ -224,7 +225,7 @@ ffinish _ = pure ()
 foreign import ccall unsafe "libpq-fe.h PQresultStatus"
   pqresultStatus :: (Ptr CStmt) -> IO #{type ExecStatusType}
 
-foreign import ccall safe "libpq-fe.h PQexecParams"
+foreign import ccall interruptible "libpq-fe.h PQexecParams"
   pqexecParams :: (Ptr CConn) -> CString -> CInt ->
                   (Ptr #{type Oid}) ->
                   (Ptr CString) ->
@@ -233,7 +234,7 @@ foreign import ccall safe "libpq-fe.h PQexecParams"
                   CInt ->
                   IO (Ptr CStmt)
 
-foreign import ccall safe "libpq-fe.h PQexec"
+foreign import ccall interruptible "libpq-fe.h PQexec"
   pqexec :: (Ptr CConn) -> CString -> IO (Ptr CStmt)
 
 foreign import ccall unsafe "libpq-fe.h &PQclear"
